@@ -4,66 +4,41 @@ from math import exp, log10, cos
 
 start_ = -11.0
 step_ = 0.1
+x = int(input())
 
-def task1(num:int)->float:
+if x < -9: print( exp(x) * log10(x) - 8)
+elif x < -4: print(99 + exp(x))
+elif -4 <= x < 2: print(pow(x, (0.1 * x)) + cos(2 * x))
+elif 2 <= x: print(exp(x) - pow(x, (0.1 * x)))
+else: print(0)
 
-    if num < -9: return exp(num) * log10(num) - 8
-    elif num < -4: return 99 + exp(num)
-    elif -4 <= num < 2: return pow(num, (0.1 * num)) + cos(2 * num)
-    elif 2 <= num: return exp(num) - pow(num, (0.1 * num))
-    else: return 0
-
-def sup_proc_1():
-
-    global start_, step_
-    start_temp = start_
+#######################################################################################################################
+#######################################################################################################################
+#######################################################################################################################
+if x < -9:
     print('| {:5} | {:5} |'.format('X', 'Y'))
-    while start_temp <= -9:
-        y = exp(start_temp) * log10(abs(start_temp)) - 8
-        print('| {:5.1f} | {:5.1f} |'.format(start_temp, y))
-        start_temp += step_
+    while start_ <= -9:
+        y = exp(start_) * log10(abs(start_)) - 8
+        print('| {:5.1f} | {:5.1f} |'.format(start_, y))
+        start_ += step_
 
-def sup_proc_2():
-
-    global start_, step_
-    start_temp = start_
+elif x < -4:
     print('| {:5} | {:5} |'.format('X', 'Y'))
-    while start_temp <= -4:
-        y = 99 + exp(start_temp)
-        print('| {:5.1f} | {:5.1f} |'.format(start_temp, y))
-        start_temp += step_
+    while start_ <= -4:
+        y = 99 + exp(start_)
+        print('| {:5.1f} | {:5.1f} |'.format(start_, y))
+        start_ += step_
 
-def sup_proc_3():
-
-    global start_, step_
-    start_temp = start_
+elif -4 <= x < 2:
     print('| {:5} | {:5} |'.format('X', 'Y'))
-    while start_temp <= 2:
-        y = pow(start_temp, 0.1 * start_temp) + cos(2 * start_temp)
-        print('| {:5.1f} | {:5.1f} |'.format(start_temp, y))
-        start_temp += step_
+    while start_ <= 2:
+        y = pow(start_, 0.1 * start_) + cos(2 * start_)
+        print('| {:5.1f} | {:5.1f} |'.format(start_, y))
+        start_ += step_
 
-def sup_proc_4():
-
-    global start_, step_
-    start_temp = start_
+elif 2 <= x:
     print('| {:5} | {:5} |'.format('X', 'Y'))
-    while start_temp <= 4.0:
-        y = exp(start_temp) - pow(start_temp, 0.1 * start_temp)
-        print('| {:5.1f} | {:5.1f} |'.format(start_temp, y))
-        start_temp += step_
-
-
-def task2(num_of_func):
-
-    if num_of_func == 1:
-        sup_proc_1()
-    elif num_of_func == 2:
-        sup_proc_2()
-    elif num_of_func == 3:
-        sup_proc_3()
-    elif num_of_func == 4:
-        sup_proc_4()
-
-print(task1(int(input())))
-print(task2(int(input())))
+    while start_ <= 4.0:
+        y = exp(start_) - pow(start_, 0.1 * start_)
+        print('| {:5.1f} | {:5.1f} |'.format(start_, y))
+        start_ += step_
