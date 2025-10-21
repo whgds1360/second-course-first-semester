@@ -5,7 +5,7 @@ var start_ := -11.0;
 var step_ := 0.1;  
 var x:=readinteger;
 
-if x < -9 then  writeln(Exp(x) * log10(x) - 8)                                // 
+if x < -9 then  writeln(Exp(x) * log10(abs(x - 8))                            // 
 else if x < -4 then  writeln(99 + Exp(x))                                     // 
 else if (-4 <= x)  and (x < 2) then  writeln(Power(x, 0.1*x) + cos(2*x))      // Здесь решение задания №1.
 else if 2 <= x then writeln(Exp(x) - Power(x, 0.1*x))                         // 
@@ -20,7 +20,7 @@ if x < -9 then
   begin  
     while  start_ <= - 9 do
       begin
-        y:= Exp(start_) * log10(start_) - 8;
+        y:= Exp(start_) * log10(abs(start_ - 8);
         writeln ('| ', start_:5:1 ,' | ', y:5:1 ,' |');                         // На эти строки можно не обращать внимания, они нужны для красивого вывода
         start_:= start_ + step_;                                                // start_:5:1 } здесь 5 это ширина строки, 1 это кол-во знаков после запятой
       end;
