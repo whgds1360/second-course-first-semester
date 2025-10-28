@@ -2,7 +2,7 @@ from random import randint
 
 
 
-arr = list(randint(-50, 50) for _ in range(20))
+arr = list(randint(-50, 50) for i in range(20))
 print(arr)
 
 new_arr = []
