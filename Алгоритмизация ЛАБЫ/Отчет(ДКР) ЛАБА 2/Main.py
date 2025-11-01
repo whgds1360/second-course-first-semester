@@ -8,7 +8,7 @@ def task1(array: list[int]) -> str:
     minimum = float('inf')
     for i in range(len(array)):
         for j in range(1, len(array)-1):
-            if abs(array[i] - array[j]) < minimum:
+            if abs(array[i] - array[j]) < minimum and i != j:
                 minimum = abs(array[i] - array[j])
                 min1 = array[i]
                 min2 = array[j]

@@ -7,8 +7,8 @@ begin
   var minimum:= Real.Epsilon;
   
   for var i:= 0 to Length(arr) do
-    for var j:= 1 to Length(arr)-1 do
-      if abs(arr[i] - arr [j]) < minimum then
+    for var j:= 0 to Length(arr) do
+      if (abs(arr[i] - arr [j]) < minimum) and (i <> j) then
         begin
         minimum:= abs(arr[i] - arr[j]);
         min1:= arr[i];
@@ -30,9 +30,9 @@ end;
 
 
 Begin
-  var len_arr:= 10
+  var len_arr:= 10;
   var arr:= ArrRandomInteger(len_arr, 1, 10);
-  task1(10, arr);
+  task1(arr);
   
   var (str, substr):=(readstring(), readstring());
   task2(str, substr)
