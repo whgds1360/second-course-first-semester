@@ -1,6 +1,18 @@
 ﻿uses GraphABC;
 
 
+var
+  scaleX, scaleY: real;
+  a, b: real;
+  n: integer;
+
+
+function F(x: real): real;
+begin
+  Result := 2 * Power(x, 3) - Power(x, 2) + 2 * x;
+end;  
+  
+
 function generator(begin_, end_, step_:integer): sequence of real;
 begin
   var f : function(num: real): real;
@@ -13,127 +25,92 @@ begin
   end;
 end;
 
-procedure draw(begin_, end_, step_: integer);
+
+function ToScreenX(x: real): integer;
 begin
-  var width := WindowWidth;
-  var height := WindowHeight;
-  
-  // Получаем данные для графика
-  var data := generator(begin_, end_, step_).ToArray;
-  if data.Length = 0 then
-  begin
-    TextOut(10, 10, 'Нет данных для построения графика');
-    exit;
-  end;
-  
-  // Находим минимальные и максимальные значения
-  var minX := begin_;
-  var maxX := end_;
-  var minY := data.Min();
-  var maxY := data.Max();
-  
-  // Добавляем отступы
-  var padding := 50;
-  var plotWidth := width - 2 * padding;
-  var plotHeight := height - 2 * padding;
-  
-  // Очищаем окно
-  ClearWindow(clWhite);
-  
-  // Рисуем оси координат
+  Result := Round(WindowWidth/2 + x * scaleX);
+end;
+
+
+function ToScreenY(y: real): integer;
+begin
+  Result := Round(WindowHeight/2 - y * scaleY);
+end;
+
+
+procedure DrawAxes;
+begin
   SetPenColor(clBlack);
   SetPenWidth(2);
   
-  // Ось X
-  Line(padding, height - padding, width - padding, height - padding);
-  // Ось Y
-  Line(padding, padding, padding, height - padding);
   
-  // Стрелки на осях
-  Line(width - padding, height - padding, width - padding - 10, height - padding - 5);
-  Line(width - padding, height - padding, width - padding - 10, height - padding + 5);
-  Line(padding, padding, padding - 5, padding + 10);
-  Line(padding, padding, padding + 5, padding + 10);
+  Line(0, WindowHeight div 2, WindowWidth, WindowHeight div 2);
+  Line(WindowWidth div 2, 0, WindowWidth div 2, WindowHeight);
   
-  // Подписи осей
+  
+  Line(WindowWidth-10, WindowHeight div 2 - 5, WindowWidth, WindowHeight div 2);
+  Line(WindowWidth-10, WindowHeight div 2 + 5, WindowWidth, WindowHeight div 2);
+  Line(WindowWidth div 2 - 5, 10, WindowWidth div 2, 0);
+  Line(WindowWidth div 2 + 5, 10, WindowWidth div 2, 0);
+  
+  
   SetFontColor(clBlack);
-  SetFontSize(10);
-  TextOut(width - padding - 15, height - padding + 10, 'X');
-  TextOut(padding - 20, padding - 20, 'Y');
+  TextOut(WindowWidth - 20, WindowHeight div 2 + 10, 'X');
+  TextOut(WindowWidth div 2 + 10, 5, 'Y');
+end;
+
+
+procedure DrawGraph(a, b, n: real);
+var
+  x, step: real;
+  y: real;
+  minY, maxY: real;
+begin
+  var maxX := Abs(a);
+  if Abs(b) > maxX then maxX := Abs(b);
+  if maxX = 0 then maxX := 1;
+  scaleX := (WindowWidth div 2 - 20) / maxX;
   
-  // Функции преобразования координат
-  function TransformX(x: real): integer;
+  
+  step := 0.1;
+  x := a;
+  minY := F(a);
+  maxY := F(a);
+  
+  while x <= b do
   begin
-    Result := padding + Round((x - minX) / (maxX - minX) * plotWidth);
+    y := F(x);
+    if y < minY then minY := y;
+    if y > maxY then maxY := y;
+    x := x + step;
   end;
   
-  function TransformY(y: real): integer;
-  begin
-    Result := height - padding - Round((y - minY) / (maxY - minY) * plotHeight);
-  end;
+  
+  var rangeY := maxY - minY;
+  if rangeY = 0 then rangeY := 1;
+  scaleY := (WindowHeight div 2 - 20) / (rangeY / 2);
+  
+  
+  ClearWindow(clWhite);
+  
+  
+  DrawAxes;
   
   // Рисуем график
   SetPenColor(clBlue);
-  SetPenWidth(3);
+  SetPenWidth(2);
   
-  for var i := 0 to data.Length - 2 do
+  step := 0.01;
+  x := a;
+  
+  MoveTo(ToScreenX(x), ToScreenY(F(x)));
+  
+  while x <= b do
   begin
-    var x1 := begin_ + i * step_;
-    var x2 := begin_ + (i + 1) * step_;
-    
-    Line(
-      TransformX(x1), 
-      TransformY(data[i]),
-      TransformX(x2),
-      TransformY(data[i + 1])
-    );
+    LineTo(ToScreenX(x), ToScreenY(F(x)));
+    x := x + step;
   end;
-  
-  // Рисуем точки
-  SetBrushColor(clRed);
-  for var i := 0 to data.Length - 1 do
-  begin
-    var x := begin_ + i * step_;
-    FillCircle(TransformX(x), TransformY(data[i]), 4);
-  end;
-  
-  // Разметка осей
-  SetPenColor(clGray);
-  SetPenWidth(1);
-  SetFontSize(8);
-  
-  // Деления на оси X
-  var xStep := (maxX - minX) / 5;
-  for var i := 0 to 5 do
-  begin
-    var xVal := minX + i * xStep;
-    var xPos := TransformX(xVal);
-    Line(xPos, height - padding - 5, xPos, height - padding + 5);
-    TextOut(xPos - 10, height - padding + 15, Format('{0:F1}', xVal));
-  end;
-  
-  // Деления на оси Y
-  var yStep := (maxY - minY) / 5;
-  for var i := 0 to 5 do
-  begin
-    var yVal := minY + i * yStep;
-    var yPos := TransformY(yVal);
-    Line(padding - 5, yPos, padding + 5, yPos);
-    TextOut(padding - 40, yPos - 5, Format('{0:F1}', yVal));
-  end;
-  
-  // Заголовок
-  SetFontSize(14);
-  SetFontStyle(fsBold);
-  TextOut(width div 2 - 100, 20, 'График функции f(x) = 2x³ - x² + 2x');
-  
-  // Информация
-  SetFontSize(10);
-  SetFontStyle(fsNormal);
-  TextOut(10, 10, Format('a={0}, b={1}, step={2}', begin_, end_, step_));
-  TextOut(10, 25, Format('minY={0:F2}, maxY={1:F2}', minY, maxY));
 end;
-
 
 
 function midle_treogylar_method(a, b, n: real): real;
@@ -165,7 +142,8 @@ begin
   writeln('2 - задать значение b');
   writeln('3 - задать значение n');
   writeln('4 - вычислить функцию');
-  writeln('5 - ВЫХОД');
+  writeln('5 - график функции');
+  writeln('6 - ВЫХОД');
   writeln('');
 end;
 
@@ -220,7 +198,7 @@ var global_n: real;
       
       5: 
         begin
-         Draw(1,20,1)
+         DrawGraph(global_a,global_b,global_n)
         end;
       
       6: 
@@ -230,8 +208,7 @@ var global_n: real;
         end;
       
       else
-        writeln('Неверный пункт меню. Выберите от 1 до 5');
-      
+        writeln('Неверный пункт меню. Выберите от 1 до 5');   
     end;
   end;
 end.
