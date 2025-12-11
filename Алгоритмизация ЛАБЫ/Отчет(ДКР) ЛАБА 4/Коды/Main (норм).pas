@@ -16,6 +16,7 @@ type
   procedure CalculateCenter;
   procedure BasicSettings;
   procedure DrawAxes(stepX, stepY: real);
+  function CalculateS(begin_, end_, step_:real; f:GraphFunction):real;
   
   public
   constructor(aXmin, aXmax, aYmin, aYmax:real);
@@ -29,9 +30,7 @@ type
       CalculateCenter;
       BasicSettings;
     end;
-  procedure DrawGraph(begin_, end_, step_: real; f: GraphFunction);
- 
-  
+  procedure DrawGraph(begin_, end_, step_: real; f: GraphFunction); 
 end;
 
 
@@ -115,6 +114,15 @@ begin
 end;
 
 
+function TGraphPlotter.CalculateS(begin_, end_, step_:real; f:GraphFunction):real;
+begin
+  var count:= 0.0;
+  
+  count += f(begin_);
+  result:= Round(count);
+end;
+
+
 procedure TGraphPlotter.DrawGraph(begin_, end_, step_: real; f: GraphFunction);
 begin
   self.DrawAxes(1, 1);
@@ -161,6 +169,7 @@ begin
   end;
   
   TextOut(20, 20, 'График функции: 2x³ - x² + 2x');
+  TextOut(20,40, self.CalculateS(-10, 10, 100, f))
 end;
 
 
