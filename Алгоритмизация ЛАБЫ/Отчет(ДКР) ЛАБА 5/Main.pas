@@ -29,7 +29,7 @@
   end;
 
 
-// Сортировка подсчетом
+
 procedure FuckingShit.CountingSort(var arr: array of integer; comp: Comparator);
 var
   count: array of integer;
@@ -67,7 +67,6 @@ begin
 end;
 
 
-// Пирамидальная сортировка
 procedure FuckingShit.HeapSort(var arr: array of integer; comp: Comparator);
 var
   n: integer;
@@ -122,10 +121,14 @@ begin
   var temp: List<integer> := new List<integer>;
   while not Eof(f) do
   begin
-    var value: integer;
-
-    Read(f, value);
-    temp.Add(value);
+    var val: integer;
+    try
+      Read(f, val);
+      temp.Add(val);
+    except
+       on System.FormatException do Print('')
+       else Println('')
+    end; 
   end;
   Close(f);
   
